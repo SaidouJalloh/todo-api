@@ -1,0 +1,59 @@
+Vous souhaitez créer une configuration GitHub Action pour un projet non-kändi utilisez principalement unknown avec . La configuration doit:
+
+1. Installer toutes les dépendencies nécessaires.
+2. Exécuter des tests automatiquement.
+3. Vérifier la qualité du code.
+4. Construire et publier les artefacts.
+5. Suivre les meilleures pratiques de CI/CD.
+Pour vous aider à créer cette configuration, nous allons utiliser une approche basée sur des scripts YAML pour réduire le nombre de modifications à effectuer dans votre fichier de configuration GitHub.
+
+Séparation du code de l'application et du codage d'action en deux sections:
+1. Section **`action`** : Cette section contient la définition complète de la commande que vous souhaitez exécuter sur chaquebuild. Dans notre cas, cette section dérive directement de celle-ci :
+```yaml
+name: Tests et validations
+on: [pull_request, push]
+jobs:
+  tests-and-validations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install --no-install-recommends python3-pip python3-setuptools python3-dev build-essential
+          pip install poetry
+          poetry install --pre --no-warn-script-conflict
+      - name: Execute tests
+        run: |
+          python test.py
+```
+
+2. Section **`jobs`** : Cette section contient les commandes que vous souhaitez exécuter sur chaquebuild. Dans notre cas, cette section contient deux commande pour l'exécution des tests automatiquement:
+```yaml
+jobs:
+  tests-and-validations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install --no-install-recommends python3-pip python3-setuptools python3-dev build-essential
+          pip install poetry
+          poetry install --pre --no-warn-script-conflict
+      - name: Execute tests
+        run: |
+          python test.py
+```
+
+Les définitions de cette section sont indiquées ci-dessous pour vous aider à comprendre comment se structurent ces deux sections :
+1. `on` est la condition selon laquelle l'action s'exécute quand une build est effectuée. Dans notre cas, cela signifie que nous souhaitons exécuter cette action lorsque nous travaillons sur notre code source et que nous avons un pull request, ainsi qu'une build unique au sein d'un dépôt GitHub. 2. `jobs` contient deux sous-sections qui sont le `name` (`name: Tests`) et `steps`. Le premier contient la définition des commandes pour exécuter les tests automatiquement :
+```yaml
+jobs:
+  tests-and-validations:
+    runs-on: ubuntu-latest
+```
+
+Ce script vous permet de définir une commande unique pour tous les branches et dépôts. Il définit `name: Tests` et `steps`. Le `runs-on` paramètre est nécessaire car nous souhaitons exécuter cette action sur l'ensemble des branches et depts publiés.
+3. Les sections **`actions/checkout@v2`** et **`actions/install-packages@v1`** contiennent les commandes pour installer toutes les dependencies nécessaires pour l'action.
+4. Le `jobs` section est une section contenant des sous-sections avec le premier (`name: Tests`) étant une commande unique pour exécuter tous les tests automatiquement, et la seconde (`steps`) étant une commande unique pour exécuter tous les tests manuels (pas de tests automatiques).
+
+Vous pouvez maintenant vous assurer que la configuration ci-dessus est correcte pour exécuter votre action, puisque cela permet d'exécuter toutes les branches et dépôts publiés et d'éventuellement exécuter des tests manuels ou automatiques.
