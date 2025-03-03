@@ -1,19 +1,67 @@
-Par défaut, la configuration GitHub Action de ce projet ne contient pas d'importations ou de commentaires explicites. Ceci est dû à l'absence d'une documentation détaillée ou des commentaires précoces sur la configuration dans les fichiers YAML utilisée pour la mise en place du déploiement automatique. Mais vous pouvez toujours générer une configuration GitHub Action complète à partir de cet exemple, qui contient uniquement l'importation, l'exécution et la publication automatique des artefacts.
+Parle en Français ? Vous avez l'option de faire un YAML (YAML Ain't Meryl Streep) pour une configuration GitHub Action dans les formats suivants :
+- yml (YML - YAML for Michelangelo): pour configurer des actions ou scripts, ce format offre un accès rapide et intuitif aux paramètres.
+-yml (YAML - YAML for You & Me): ce format est généralement utilisé avec des fichiers référencés (crawlers) pour extraire des données à partir d'un site web. Il peut également être utilisé en tant que moyen de contournement, car il permet un accès rapide et intuitif aux paramètres.
+-yml (YAML - Yaml for Everyone): ce format est généralement utilisé avec des scripts pour effectuer des tâches à l'aide d'une commande (par exemple, "npm run build"), ou lorsque vous avez besoin de lire des fichiers référencés. Il peut également être utilisé en tant que moyen de contournement.
 
-La configuration est basée sur les outils GitHub Actions que vous utilisez pour le projet en question. Si vous avez déjà installé les outils, vous pouvez passer à l'étape suivante sans changer de base.
+Le format YAML est également utilisé pour les tests automatisés et les artefacts, qui sont les éléments principaux d'un projet, ainsi que l'ensemble du code source. Cela offre un moyen simple de contrôler les qualités de votre code, y comprenez-le et vous permet de maintenir une cohérence en matière de versionnage entre vos dépôts.
 
-Pour plus d'informations sur la configuration YAML utilisée pour cette action, nous recommandons la consultation du fichier YAML qui contient le code source et l'interface utilisateur du déploiement automatique. Ceci vous permettra de décoder les concepts clés de la mise en place des artefacts à partir de ce déploiement.
+Ceci est un exemple de configuration:
 
-Si vous souhaitez plus de détail sur la configuration GitHub Actions, veuillez consulter la documentation officielle GitHub Actions.
+```yaml
+name: CI/CD
 
-Exécutez la commande suivante pour générer une configuration GitHub Action complète pour cet projet :
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
-```bash
-# ou pour utiliser une version spécifique du code source à copier et modifier
-git clone https://github.com/<user>/<repo>.git
-cd <repo>
-# ou pour ajouter des versions de dépendances supplémentaires (par exemple pour un autre framework que NodeJS)
-yarn add dependency-name --dev
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js ${{ env().node_version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env().node_version }}
+
+      - name: Install dependencies
+        run: |
+          yarn install
+          npm run build
+
+      - name: Run tests
+        run: |
+          yarn test
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env().node_version }}
+
+      - name: Install dependencies for deploying to Heroku
+        run: |
+          yarn install
+          npm run build
+          npm run deploy
+
+      - name: Deploy to Heroku
+        uses: heroku/heroku-deploy@v1.0.65
+        with:
+          command: start
 ```
 
-Et vous allez bien ! Cette configuration GitHub Action est disponible avec les fichiers YAML mis à jour pour vous aider dans le processus de déploiement automatique de votre projet en utilisant les outils et la documentation utiles disponibles.
+Cette configuration met à jour les fichiers YAML de l'action pour la version 2 (ou "YAML 2"), puis installe une nouvelle dépendance Node.js dans les versions supérieures à celle utilisées par l'action. Il effectue ensuite des tests et un déploiement automatique sur Heroku, ainsi que l'installation d'une application web compatible avec le framework web de définition (FWDE) Webpack en fonction du fichier `.env` spécifié dans la configuration. Vous pouvez modifier les paramètres pour votre propre déploiement ou configurer un autre environnement, tels que "Travis CI", "CircleCI" ou "GitHub Actions".
+
+En outre, il existe d'autres formats YAML disponibles, dont le format YML pour les données référencées (RDF) et YML pour les tests automatisés, ainsi que les autres formats standard de configuration pour les différents composants de l'action Gitflow (GitLab, Bitbucket, etc.). Parle en Français ? Vous aurez besoin d'une petite explication plus ou moins précise sur chaque format, afin de vous aider à trouver la solution appropriée à vos besoins.
