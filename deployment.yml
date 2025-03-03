@@ -1,0 +1,31 @@
+Cliquez sur l'icône d'envoi pour créer votre déploiemt de production pour le projet inconnu:
+
+1. Instructions pour la construction de la production:
+   - Sélectionnez les ressources nécessaires au développement (équipement, matériaux) et les plans de travail, incluez l'installation, la maintenance, et la réparation du système (si nécessaire).
+   - Configurer les systèmes de communication et les technologies de production (SIP/SAPI, réseau, logiciels...).
+
+2. Variables d'environnement:
+   - Saisissez la configuration des variables environnementales pour le projet. Les variables sont définies lors du lancement de l'application de production.
+   - Les variables doivent être sécurisées et protégées afin que les utilisateurs ne peinent pas à manipuler les données.
+
+3. Configuration de la santé post-déploiemt:
+   - Sélectionnez le type de déploiement pour assurer la cohérence et la disponibilité des produits.
+   - Configurer les paramètres de configuration de redondance et de replication.
+   - Saisissez les configurations de synchronisation avec les serveurs de réplication, ainsi que la stratégie de synchonisation.
+   - Configuration du système de gestion de l'état pour réguler le service lorsqu'un service est en panne ou sur une nouvelle source.
+
+4. Configuration des contrôleurs de la production:
+   - Configurer les paramètres de configuration pour chaque contrôleur de la production, incluez les informations d'identification du conteneur (si applicable).
+   - Configurez les stratégies de synchronisation entre les contrôleurs de la production.
+
+5. Procédures de rollback post-déploiemt:
+   - Configurer les procédures de récupération pour éviter le cas échéant d'une erreur ou de l'arrêt d'un service inutilisable.
+   - Avez une méthode pour déterminer la base de données de configuration récupérable et à partir duquel les informations de synchronisation peuvent être extraite.
+   - Configuration des stratégies de sauvegarde et de restauration (si nécessaire).
+
+6. Prévention des erreurs:
+   - Configurer des systèmes pour détecter l'origine d'un problème lors du déploiement, puis les corriger dans le cas d'une erreur inattendue.
+   - Protéger les configurations de production (si nécessaire) contre les modifications non révélées par une modification incorrecte de source, ainsi que des configurations et données sensibles.
+
+Conclusion:
+  - La configuration de déploiement cloud pour un projet inconnu doit inclure des procédures d'envoi unique dans la fonctionnalité de construction de la production, les variables environnementales, la configuration de la santé post-déploiemt et les configurations de contrôleurs de la production. La configuration doit inclure un plan de récupération pour éviter le cas échéant d'une erreur ou de l'arrêt d'un service inutilisable.
