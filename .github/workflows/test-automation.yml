@@ -1,82 +1,79 @@
-Lorsque vous utilisez la configuration GitHub Action pour une nouvelle application ou projet, il est utile de connaître le code source et les contraintes spécifiques d'un projet donné. Les actions ci-dessous ont été écrites en réponse à ces besoins. C'est une liste complète de toutes les actions que vous pouvez utiliser pour gérer vos projets GitHub.
+En utilisant la technologie GitHub, vous pouvez utiliser un outil de gestion d'arret GitHub Action appelé "github-actions/workflow-dispatch". Cela permet à votre projet d'exécuter une configuration de workflow automatique lorsque l'action est exécutée.
 
-**Liste de configuration GitHub Action:**
+Premièrement, installez la dernière version de Github actions pour votre langage de programmation (Python en notre cas). Dans notre cas:
 
-1. **Principale** - Vérifier la qualité du code (Junit et Spock)
-2. **Référence** - Créer une nouvelle version du code (Gitflow)
-3. **Cross-project collaboration** - Créer des branches multiples pour chaque projet (Gitflow)
-4. **Test unitaires et acceptation de tests** - Executer les tests unitaires et acceptation de tests (Junit et Spock) automatiquement lors d'une commande GitHub Action
-5. **En-tête génération automatique** - Générer le header pour les fichiers de code source avec un script (Scala) automatiquement
-6. **Gestion de l'API REST** - Gérer la gestion des API REST avec l'API Gateway GitHub (Jenkins CI, CircleCI)
-7. **Code style et documentación automatique** - Styliser le code et générer le documentation automatiquement avec un script (Doxygen, Sphinx) automatiquement
-8. **Continuous integration** - Exécuter des tests unitaires et acceptation de tests automatique lors d'une commande GitHub Action (Jenkins CI, CircleCI, TravisCI)
-9. **Continuous deployment** - Triggerar le déploiement de l'application lors du passage à partir de la branche principale pour une nouvelle version du code (Gitflow)
-10. **Informatique de documentation (Markdown et HTML)** - Exécuter des scripts de création automatique de fichiers de document (HTML et Markdown)
+1. Dans le dossier de travail du projet, apportez-vous une nouvelle branch appelée `master` et insérez-y vos modifications supplémentaires.
 
-Pour en savoir plus sur chaque action ci-dessus, consultez la section ci-dessous:
+2. Ajoutez votre propre `.github/workflows/` fichier pour l'instant contenir votre workflow. Si vous le souhaitez, créez également un dossier avec le même nom dans ce répertoire. Exemple:
 
-**Principale** - Vérifier la qualité du code (Junit et Spock):
+   ```yaml
+   name: Build and deploy
 
-1. **Name**: CodeChecker
-2. **Description**: CodeChecker est une application Java qui permet de vérifier le code source pour les petits emplois, des entreprises et des institutions publiques. Il existe trois versions principales de la solution : un logiciel gratuit (Community), un logiciel libre (GPL) avec des contraintes de licence, et un logiciel commercial (propriété intellectuelle).
-3. **Links**: 
-    - CodeChecker Site Web (https://codechecker.io/)
-    - Github Repository (https://github.com/JaggedSoftware/CodeChecker)
-4. **Documentation**: https://jaggedsoftware.github.io/CodeChecker
-5. **Installation et Configuration**: CodeChecker doit être installé dans l'environnement de votre choix (Windows, Unix, Linux). Il est également nécessaire d'installer les dépendances requises. Cela peut être fait en utilisant le déploiement de Packages Gradle ou Maven.
-6. **Contributions**: CodeChecker a été construit en utilisant Java avec Eclipse. Les contributeurs sont invités à contribuer dans la faible communauté Java et pour la plupart ils sont locaux aux États-Unis.
-7. **Différents scénarios d'utilisation**: CodeChecker peut être utilisé dans des environnements de travail, des test automatiques et d'autres applications. Il peut également être installé sur des machines Linux pour les tests de fonctionnement de l'infrastructure ou pour aider à la validation du code source.
-8. **Ressources utiles**: 
-    - Dépôt Github (https://github.com/JaggedSoftware/CodeChecker)
-    - Documentation du projet (https://jaggedsoftware.github.io/CodeChecker)
-9. **Licence de la solution**: Licences:
-    - CodeChecker (v1.0.4, 2021-03-08)
-        - Démarrage du développement à partir d'une nouvelle branche de la communauté Open Source : https://github.com/JaggedSoftware/CodeChecker/blob/develop/LICENSE
-    - CodeChecker (v2.0.5, 2021-04-17)
-        - Démarrage du développement à partir d'une nouvelle branche de la communauté Open Source : https://github.com/JaggedSoftware/CodeChecker/blob/develop/LICENSE
+   on:
+     pull_request:
+       branches:
+         - master
+   
+   jobs:
+     build:
+       runs-on: ubuntu-latest
+       steps:
+         - uses: actions/checkout@v2
+         - name: Set up Python environment
+           uses: actions/setup-python@v2
+           with:
+             python-version: '3.8'
+             cache: [ 'pip', 'pipx' ]
+         - name: Install dependencies
+           run: |
+             pip install -r requirements.txt
+             pipx install poetry
+         - name: Build and deploy
+           env:
+             PYTHON_ENV: production
+           run: poetry run python setup.py sdist bdist_wheel --formats=zip
+   ```
 
-**Référence**:
+3. Appliquez votre workflow à l'aide de la commande `workflow-dispatch`:
 
-1. **Name**: JavaDoc
-2. **Description**: JavaDoc est un générateur de documentation XML qui permet de commenter le code source pour la documentation d'un projet ouvert. Il peut être utilisé pour générer et annoter des fichiers de documentation en utilisant les classes d'API, les classes de classe ou la bibliothèque JavaDoc ou pour générer des fichiers de commentaire de documentation en utilisant les fichiers dox.info.
-3. **Links**: 
-    - Site Web (https://jaredpolsky.com/javadoc/)
-4. **Documentation**: https://www.javadoc.io
-5. **Installation et Configuration**: JavaDoc peut être installé à partir du Repository JAR Maven central ou de fauteuil. Il est préférable d'installer dans le même chemin que les fichiers sources au cas où il s'agit d'un projet JavaOpenAPI, qui peut être utilisé pour créer des documents de documentation XML.
-6. **Références**: JavaDoc est une solution open-source et libre (MIT Licence) disponible à partir du repo Maven Central.
-7. **Contributions**: JavaDoc a été construit en utilisant Java, les classes JavaDoc, le Dox.info et d'autres outils communément disponibles pour créer des documents de documentation XML. Il peut également être utilisé pour créer des documents de commentaire de documentation, avec notamment la bibliothèque JavaDoc et Dox.info.
-8. **Démarrage**:
-    - CodeChecker (v1.0.4, 2021-03-08)
-        - Démarrage du développement à partir d'une nouvelle branche de la communauté Open Source : https://github.com/JaggedSoftware/CodeChecker/blob/develop/Doxygen.xml
-9. **Licence**: Licences:
-    - JavaDoc (v1.0.4, 2021-03-08)
-        - Démarrage du développement à partir d'une nouvelle branche de la communauté Open Source : https://github.com/JaggedSoftware/CodeChecker/blob/develop/LICENSE
+   ```yaml
+   name: Build and deploy
 
-**Cross-project collaboration**:
+   on:
+     pull_request:
+       branches:
+         - master
+   
+   jobs:
+     build:
+       runs-on: ubuntu-latest
+       steps:
+         - uses: actions/checkout@v2
+         - name: Set up Python environment
+           uses: actions/setup-python@v2
+           with:
+             python-version: '3.8'
+             cache: [ 'pip', 'pipx' ]
+         - name: Install dependencies
+           run: |
+             pip install -r requirements.txt
+             pipx install poetry
+         - name: Build and deploy
+           env:
+             PYTHON_ENV: production
+           run: poetry run python setup.py sdist bdist_wheel --formats=zip
+   ```
 
-1. **Name**: Gitflow
-2. **Description**: Gitflow est une organisation de code basée sur la commande Gitflow, qui s'agit d'une structure pour développer un projet en fonction de la plupart des principes suivants :
-    - Le code reste dans le référentiel source pour les commits.
-    - Les branches sont utilisées pour travailler sur des projets distincts et pour créer un travail interne de code et une relation entre le travail interne de code et la production d'origine.
-3. **Links**: 
-    - Gitflow (v5.1.0, 2020-09-18)
-        - Démarrage du développement à partir d'une nouvelle branche de la communauté Open Source : https://github.com/GitbookIO/gitflow-starter/blob/master/README.md
-4. **Documentation**: 
-    - Gitflow (v5.1.0, 2020-09-18)
-        - Documentation sur la structure Gitflow: https://tj.github.io/git-extras/#gitflow-workflow
-      - Démarrage du développement à partir d'une nouvelle branche de la communauté Open Source : https://github.com/GitbookIO/gitflow-starter/blob/master/README.md
-5. **Références**: 
-    - Gitflow (v5.1.0, 2020-09-18)
-        - Démarrage du développement à partir d'une nouvelle branche de la communauté Open Source : https://github.com/GitbookIO/gitflow-starter/blob/master/Doxygen.xml
+4. Si vous souhaitez utiliser des images Docker pour votre workflow, créez une nouvelle image Docker, puis exécutez-la comme suit dans la fenêtre de terminal ou l'IDE de votre choix:
 
-**Ressources utiles**: 
+   ```bash
+   docker build -t YOUR_IMAGE_NAME .
+   docker run --rm -it \
+     -v $(pwd):/project \
+     -v $HOME/.cache:/root/.cache \
+     -w /project \
+     YOUR_IMAGE_NAME:latest poetry run python setup.py sdist bdist_wheel --formats=zip
+   ```
 
-1. **Name**: DocsAPI
-2. **Description**: DocsAPI est un projet open source qui propose des serveurs de documentations générés par Dox (Documentation extrait). Il s'agit d'un outil pour la création, l'édition et l'enrichissement des documents dox sur les bases de données XML.
-3. **Links**: 
-    - DocsAPI (v1.2.0, 2021-10-05)
-        - Démarrage du développement à partir d'une nouvelle branche de la communauté Open Source : https://github.com/DoxygenDevTeam/docsapi/blob/master/README.md
-4. **Documentation**: 
-    - DocsAPI (v1.2.0, 2021-10-05)
-        - Démarrage du développement à partir d'une nouvelle branche de la communauté Open Source : https://github.com/DoxygenDevTeam/docsapi/blob/master/DoXDocAPI.xml
-      - Démarrage du développement à partir d'une nouvelle branche de la communauté Open Source : https://github.com/DoxygenDevTeam/doxdocapidoc-starter/blob/main/README.md
+Vous devez maintenant que votre workflow est en train d'exécuter automatiquement. Votre projet devrait maintenant être déployé avec des images Docker prêtes à l'emploi et tous les tests passés.
+Pour une meilleure pratique de CI/CD, vous pouvez utiliser GitLab Pipelines pour le déploiement final.
