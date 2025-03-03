@@ -1,29 +1,16 @@
-# Job name and description for the "unknown-project" GitHub Action
+Nom : unknown_github_action_configurator
 
-name: "Unknown Project"
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+Résumé : C'est une configuration GitHub Action qui est composée de trois parties principales :
 
-jobs:
-  build:
-    name: Build Unknown Project
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.head_ref }}
-          
-      - run: |
-          npm install && npm test
-          cp .env.example .env
-          
-      - name: Push changes to repository
-        if: ${{ !contains(github.event.head_branch, 'master') }}
-        uses: adricsamuel/push-to-origin@v1
-        with:
-          remoteName: unknown-project
-          remoteEmail: unknown-
+1. Lance une execution automatique du test suite et la veillez pour vérifier que tout fonctionne correctement avant d'exécuter les tâches suivantes
+2. Exécute les tests de qualité automatiques (lancés via Github Actions ou autres)
+3. Répétez toutes les tâches ci-dessous après l'exécution des tests
+4. Suivez les meilleures pratiques pour le CICD (continuity, continuation, integration, delivery et release)
+
+Lance la suite:
+1. Lancez l'exécution automatique du test suite de manière à garantir que tout fonctionne correctement avant d'exécuter les tâches suivantes. Les tests peuvent être effectués via Github Actions ou autres.
+2. Exécutez les tests de qualité automatiques (lancés via Github Actions ou autres) pour vérifier que tous les outils et systèmes de production fonctionnent correctement en terminaient avec des résultats positifs.
+3. Veillez à garder tous les artefacts (code, fichiers d'application, etc.) disponibles pour le suivant de la liste ci-dessous afin que vous puissiez continuer à développer et réparer votre application après l'exécution des tests.
+4. Suivez les meilleures pratiques de CI/CD pour l'exécution d'une phase de vérification, validation, publication (CVP) automatique, suivie du déploiement de la fonctionnalité, des mises à jour de base et des versions de production.
+
+Exécutez ces tâches avec le workflow "pipeline.yml" présent dans votre projet GitHub. C'est pour vous permettre d'obtenir les artefacts nécessaires pour continuer à développer et réparer votre application après l'exécution des tests de qualité automatiques.
