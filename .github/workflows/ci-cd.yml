@@ -1,0 +1,49 @@
+Par défaut, la commande GitHub Action `on` utilise `context`, qui a été introduit dans GitHub Actions en 2018 pour réduire la surface d'attaque lors de l'exécution de workflows (workflows are the building blocks of your GitHub Actions workflows). Les contextes sont spécifiques à chaque action et ont la valeur actuelle de l'action actuellement exécutée dans l'environnement actuel. Cependant, dans le cas d'un projet inconnu avec . Mais pour que cet workflow puisse fonctionner correctement, il est nécessaire d'utiliser des contextes qui identifient les différentes branches et les versions du projet.
+
+Pour cela, vous devez définir `on` dans votre action comme suit:
+
+```yaml
+name: CI/CD
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build and Test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker run \
+            --env-file <(printf '%s\n' "$GITHUB_TOKEN" "GITHUB_TOKEN") \
+            -v $(pwd):/workspace \
+            -e GITHUB_USERNAME=<user> \
+            -e GITHUB_EMAIL=<email> \
+            -e GITHUB_TOKEN=<token> \
+            --rm=false \
+            node:12.13.0-alpine /workspace/node_modules/.bin/npm run build \
+            --silent \
+            --no-progress \
+            --color=always
+
+```
+
+La variable `${GITHUB_TOKEN}` peut être remplacée par votre propre clé de PAT à l'aide de la commande `echo` ou en utilisant `env`. Vous pouvez également utiliser des variables pour le nom du répertoire actuel et le nom de votre organisation sur GitHub.
+
+Enfin, vous devrez ajouter une définition d'environnement dans votre fichier .yaml afin qu'il puisse fonctionner correctement:
+
+```yaml
+env:
+  GITHUB_USERNAME: <user>
+  GITHUB_EMAIL: <<email>>
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # replace by your token value
+```
+
+Vous pouvez utiliser `env` comme suit pour spécifier la valeur de chaque champs.
+
+Ceci donne ainsi à l'action une définition d'environnement pour pouvoir travailler correctement, et il va s'assurer que tout le contenu de l'action est exécuté dans cet environnement.
