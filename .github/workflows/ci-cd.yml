@@ -1,49 +1,19 @@
-Par défaut, la commande GitHub Action `on` utilise `context`, qui a été introduit dans GitHub Actions en 2018 pour réduire la surface d'attaque lors de l'exécution de workflows (workflows are the building blocks of your GitHub Actions workflows). Les contextes sont spécifiques à chaque action et ont la valeur actuelle de l'action actuellement exécutée dans l'environnement actuel. Cependant, dans le cas d'un projet inconnu avec . Mais pour que cet workflow puisse fonctionner correctement, il est nécessaire d'utiliser des contextes qui identifient les différentes branches et les versions du projet.
+Par défaut, la configuration GitHub Action de ce projet ne contient pas d'importations ou de commentaires explicites. Ceci est dû à l'absence d'une documentation détaillée ou des commentaires précoces sur la configuration dans les fichiers YAML utilisée pour la mise en place du déploiement automatique. Mais vous pouvez toujours générer une configuration GitHub Action complète à partir de cet exemple, qui contient uniquement l'importation, l'exécution et la publication automatique des artefacts.
 
-Pour cela, vous devez définir `on` dans votre action comme suit:
+La configuration est basée sur les outils GitHub Actions que vous utilisez pour le projet en question. Si vous avez déjà installé les outils, vous pouvez passer à l'étape suivante sans changer de base.
 
-```yaml
-name: CI/CD
+Pour plus d'informations sur la configuration YAML utilisée pour cette action, nous recommandons la consultation du fichier YAML qui contient le code source et l'interface utilisateur du déploiement automatique. Ceci vous permettra de décoder les concepts clés de la mise en place des artefacts à partir de ce déploiement.
 
-on: [push]
+Si vous souhaitez plus de détail sur la configuration GitHub Actions, veuillez consulter la documentation officielle GitHub Actions.
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+Exécutez la commande suivante pour générer une configuration GitHub Action complète pour cet projet :
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Build and Test
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          docker run \
-            --env-file <(printf '%s\n' "$GITHUB_TOKEN" "GITHUB_TOKEN") \
-            -v $(pwd):/workspace \
-            -e GITHUB_USERNAME=<user> \
-            -e GITHUB_EMAIL=<email> \
-            -e GITHUB_TOKEN=<token> \
-            --rm=false \
-            node:12.13.0-alpine /workspace/node_modules/.bin/npm run build \
-            --silent \
-            --no-progress \
-            --color=always
-
+```bash
+# ou pour utiliser une version spécifique du code source à copier et modifier
+git clone https://github.com/<user>/<repo>.git
+cd <repo>
+# ou pour ajouter des versions de dépendances supplémentaires (par exemple pour un autre framework que NodeJS)
+yarn add dependency-name --dev
 ```
 
-La variable `${GITHUB_TOKEN}` peut être remplacée par votre propre clé de PAT à l'aide de la commande `echo` ou en utilisant `env`. Vous pouvez également utiliser des variables pour le nom du répertoire actuel et le nom de votre organisation sur GitHub.
-
-Enfin, vous devrez ajouter une définition d'environnement dans votre fichier .yaml afin qu'il puisse fonctionner correctement:
-
-```yaml
-env:
-  GITHUB_USERNAME: <user>
-  GITHUB_EMAIL: <<email>>
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # replace by your token value
-```
-
-Vous pouvez utiliser `env` comme suit pour spécifier la valeur de chaque champs.
-
-Ceci donne ainsi à l'action une définition d'environnement pour pouvoir travailler correctement, et il va s'assurer que tout le contenu de l'action est exécuté dans cet environnement.
+Et vous allez bien ! Cette configuration GitHub Action est disponible avec les fichiers YAML mis à jour pour vous aider dans le processus de déploiement automatique de votre projet en utilisant les outils et la documentation utiles disponibles.
