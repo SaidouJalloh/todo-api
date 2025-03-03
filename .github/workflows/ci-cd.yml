@@ -1,53 +1,29 @@
-L’action GitHub Action suivante génère une configuration pour un projet de type utilisant le langage1 (Python) et le framework1 (Flask), ainsi que les dépendances nécessaire pour l'exécution des tests automatiques, la validité du code et la publication d'artefacts.
+# Job name and description for the "unknown-project" GitHub Action
 
-Dans ce cas, nous avons choisi de utiliser YAML comme langue principale, mais vous pouvez trouver toutes les informations et les commentaires nécessaires dans le fichier `main.yml`.
+name: "Unknown Project"
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
-```yml
-name: CI/CD
-on: [push, pull_request]
 jobs:
-  build-and-test:
+  build:
+    name: Build Unknown Project
     runs-on: ubuntu-latest
+    
     steps:
       - uses: actions/checkout@v2
         with:
-          submodules: recursive
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v1
+          ref: ${{ github.head_ref }}
+          
+      - run: |
+          npm install && npm test
+          cp .env.example .env
+          
+      - name: Push changes to repository
+        if: ${{ !contains(github.event.head_branch, 'master') }}
+        uses: adricsamuel/push-to-origin@v1
         with:
-          python-version: '3.7'
-      - name: Install Dependencies
-        run: |
-          pip install --upgrade pip setuptools wheel
-          pip install -r requirements.txt
-      - name: Run Tests
-        run: |
-          pytest --cov=myapp
-      - name: Create Release
-        id: create-release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: $(git describe --tags --abbrev=0)
-          release_name: Release $(git describe --tags --abbrev=0)
-          body: |
-            Contains all necessary dependencies for executing tests and publishing artefacts.
-      - name: Publish Artefact
-        if: ${{ github.event.inputs.publish && contains('main', github.ref) }}
-        uses: actions/upload-artifact@v1
-        with:
-          name: 'Artifacts'
-          path: |
-            myapp
-```
-
-Cette configuration est composée des étapes suivantes :
-
-1. Création d’un fork de votre repo dans l’environnement GitHub (si vous n’en avez pas déjà fait).
-2. Installation du langage et framework (Python 3.7, Flask, etc.) sur vos fichiers.
-3. Instruction des dépendences à installer (pip install -r requirements.txt) et la configuration de l’environnement via `actions/setup-python@v1`.
-4. Exécution de tests automatiques (pytest --cov=myapp) en fonction du code source ou des modifications que vous avez apportées dans le dernier commit.
-5. Construction d’artefacts (pytest output, coverage report, etc.) qui vous seront téléchargés sur votre repo GitHub.
-6. Gestion de la version de commit et la publication d’artefacts dans votre dépôt github.
-7. Commentaires explicatifs et détaillants dans le fichier `main.yml`.
+          remoteName: unknown-project
+          remoteEmail: unknown-
