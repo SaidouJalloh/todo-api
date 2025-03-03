@@ -1,31 +1,53 @@
-Créateur: `Github Actions`
+L’action GitHub Action suivante génère une configuration pour un projet de type utilisant le langage1 (Python) et le framework1 (Flask), ainsi que les dépendances nécessaire pour l'exécution des tests automatiques, la validité du code et la publication d'artefacts.
 
-Sous-répertoire: `.github/workflows/`
+Dans ce cas, nous avons choisi de utiliser YAML comme langue principale, mais vous pouvez trouver toutes les informations et les commentaires nécessaires dans le fichier `main.yml`.
 
-Dépendances:
-1. `node`: L’installation de Node.js est obligatoire pour l’utilisation de cette configuration GitHub Action.
-2. `npm`: Utilisez `npm install` pour installer les dépendances nécessaires (si nécessaire).
+```yml
+name: CI/CD
+on: [push, pull_request]
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.7'
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+      - name: Run Tests
+        run: |
+          pytest --cov=myapp
+      - name: Create Release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: $(git describe --tags --abbrev=0)
+          release_name: Release $(git describe --tags --abbrev=0)
+          body: |
+            Contains all necessary dependencies for executing tests and publishing artefacts.
+      - name: Publish Artefact
+        if: ${{ github.event.inputs.publish && contains('main', github.ref) }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: 'Artifacts'
+          path: |
+            myapp
+```
 
-Exécution des tests automatiquement :
-1. Installation du `jest` et `ava` packages.
-   - Pour plus d’informations sur ces modules, consultez la page [Jest](https://github.com/facebook/jest) ou [Ava](https://github.com/avajs/ava).
-2. Lecture du fichier `package.json` pour récupérer les `dependencies` et `devDependencies`.
-   - Si nécessaire, ajouter un `devDependency` ou `optionalDependency` dans le fichier `package.json`.
+Cette configuration est composée des étapes suivantes :
 
-Véflication de la qualité du code :
-1. Utilisation de la [linter-eslint](https://github.com/ESLint/eslint-plugin-eslint-plugin) pour évaluer l’utilisation de la `eslint` et `prettier` packages.
-   - Pour plus d’informations sur les outils de linter, consultez la page [ESLint](https://eslint.org/) ou [Prettier](https://prettier.io/).
-2. Instrumentation du code avec la `istanbul` et `nyc` modules.
-   - Pour plus d’informations sur ces outils, consultez la page [Istanbul](https://gotwarlost.github.io/istanbul/) ou [NYC](https://getnikola.com/nikola-docs/core/#nystatico).
-3. Vérification de l’utilisation du `coverage` dans le fichier `report`.
-   - Le fichier `report` doit contenir un fichier `.html`, `json` ou `jsonl` qui indique à Github Action de visualiser la couverture du code.
-
-Configuration de la CI/CD :
-1. Configuration du [GitHub Actions](https://docs.github.com/en/actions) avec des variables d’environnement pour l’utilisation du `Node.js`, `Yarn` et `Npm`.
-   - Pour plus d’informations sur ces outils, consultez la page [GitHub Actions](https://docs.github.com/en/actions).
-2. Configuration de la [Docker image](https://docs.docker.com/configure-image-pull-security/) utilisée pour l’installation et le déploiement du code.
-   - Pour plus d’informations sur les images Docker, consultez la page [Docker Images](https://docs.docker.com/builds/).
-3. Configuration de la [branch source](https://docs.github.com/en/actions/using-workflows/working-with-github-actions#selecting-the-branch-or-directory-to-run-the-action-on) pour l’exécution de la workflow.
-   - Pour plus d’informations sur les branches source, consultez la page [Branches source](https://docs.github.com/en/actions/using-workflows/working-with-github-actions#selecting-the-branch-or-directory-to-run-the-action-on).
-4. Utilisation des `Github Secrets` pour l’identification du `repository`, de la `branch`, et de la `token`.
-   - Pour plus d’informations sur les secrets, consultez la page [Secrets](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#securescenariosecrets) ou [Configuration des secrets dans votre workflow](https://github.com/marketplace/actions/configuring-secrets?ref=repository).
+1. Création d’un fork de votre repo dans l’environnement GitHub (si vous n’en avez pas déjà fait).
+2. Installation du langage et framework (Python 3.7, Flask, etc.) sur vos fichiers.
+3. Instruction des dépendences à installer (pip install -r requirements.txt) et la configuration de l’environnement via `actions/setup-python@v1`.
+4. Exécution de tests automatiques (pytest --cov=myapp) en fonction du code source ou des modifications que vous avez apportées dans le dernier commit.
+5. Construction d’artefacts (pytest output, coverage report, etc.) qui vous seront téléchargés sur votre repo GitHub.
+6. Gestion de la version de commit et la publication d’artefacts dans votre dépôt github.
+7. Commentaires explicatifs et détaillants dans le fichier `main.yml`.
